@@ -1,47 +1,86 @@
 from tkinter import *
-from tkinter import messagebox
+import math
+
 root=Tk()
 root.title("Calculator")
-root.geometry("500x500")
-entry1=Entry(root)
-entry2=Entry(root)
-entry1.place(x=50,y=50)
-entry2.place(x=100,y=50)
+root.geometry("400x300")
 
-def action(entry1,entry2,action):
-    a = float(entry1.get())
-    b = float(entry2.get())
-    if action == '+':
-        messagebox.showinfo(message=(a+b))
-    elif action == '-':
-        messagebox.showinfo(message=(a-b))
-    elif action == '*':
-        messagebox.showinfo(message=(a*b))
-    elif action == '/':
-        messagebox.showinfo(message=(a/b))
-    elif action == '^':
-        messagebox.showinfo(message=(a**b))
-    elif action == 'clear':
-        entry1.delete(0,END)
-        entry2.delete(0,END)
+
+entry=Entry(root)
+entry.grid(row=0, column=0, columnspan=4)
+
+def click(btn):
+    text = btn
+    if text == "=":
+        try:
+            result = eval(entry.get())
+            entry.delete(0, END)
+            entry.insert(END, result)
+        except Exception as e:
+            entry.delete(0, END)
+            entry.insert(END, "Error")
+    elif text == "C":
+        entry.delete(0, END)
+    elif text == "!":
+        try:
+            result = factorial(int(entry.get()))
+            entry.delete(0, END)
+            entry.insert(END, result)
+        except Exception as e:
+            entry.delete(0, END)
+            entry.insert(END, "Error")
+    elif text in ["sin", "cos", "tan", "cot"]:
+        try:
+            result = getattr(math, text)(float(entry.get()))
+            entry.delete(0, END)
+            entry.insert(END, result)
+        except Exception as e:
+            entry.delete(0, END)
+            entry.insert(END, "Error")
+    elif text == "exit":
+        root.destroy()
+    elif text == "del":
+        entry.delete(len(entry.get())-1, END)
     else:
-        messagebox.showinfo(message="Invalid action")
+        entry.insert(END, text)
 
-bth=Button(root,text="+",command=lambda: action(entry1, entry2, '+'))
-bth.place(x=20,y=100)
+def key_press(event):
+    if event.char.isdigit() or event.char in ['.', '+', '-', '*', '/', '!', '(', ')','=']:
+        click(event.char)
+    elif event.keysym == "BackSpace":
+        click("del")
 
-bth=Button(root,text="-",command=lambda: action(entry1, entry2, '-'))
-bth.place(x=40,y=100)
+def factorial(n):
+    return math.factorial(n)
 
-bth=Button(root,text="*",command=lambda: action(entry1, entry2, '*'))
-bth.place(x=60,y=100)
+def sin(n):
+    return math.sin(n)
 
-bth=Button(root,text="/",command=lambda: action(entry1, entry2, '/'))
-bth.place(x=80,y=100)
+def cos(n):
+    return math.cos(n)
 
-bth=Button(root,text="^",command=lambda: action(entry1, entry2, '^'))
-bth.place(x=100,y=100)
+def tan(n):
+    return math.tan(n)
 
-bth=Button(root,text="Clear",command=lambda:action(entry1, entry2, 'Clear'))
-bth.place(x=120,y=100)
+def cot(n):
+    return 1 / math.tan(n)
+
+buttons = [
+    '7', '8', '9', '/',
+    '4', '5', '6', '*',
+    '1', '2', '3', '-',
+    '.', '0', '=', '+',
+    '(', ')',
+    'C', '!', 'sin', 'cos', 'tan', 'cot', 'exit', 'del'
+]
+
+i = 0
+for btn in buttons:
+    def command(btn=btn):
+        click(btn)
+    Button(root, text=btn, width=10, relief='ridge', activebackground='orange', command=command).grid(row=i//4+1, column=i%4)
+    i += 1
+
+root.bind('<Key>', key_press)
+
 root.mainloop()
