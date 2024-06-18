@@ -1,5 +1,6 @@
 from tkinter import *
 import math
+import re
 
 root=Tk()
 root.title("Calculator")
@@ -13,34 +14,28 @@ def click(btn):
     text = btn
     if text == "=":
         try:
-            result = eval(entry.get())
+             # Replace "5!" with "factorial(5)"
+            expr = re.sub(r"(\d+)!", r"factorial(\1)", entry.get())
+            # Replace "(2+3)!" with "factorial(2+3)"
+            expr = re.sub(r"\(([^)]+)\)!", r"factorial(\1)", expr)
+            result = eval(expr, {'__builtins__': None, 'factorial': factorial, 'sin': sin, 'cos': cos, 'tan': tan, 'cot': cot, 'ln': ln, 'sqrt': sqrt})
             entry.delete(0, END)
             entry.insert(END, result)
         except Exception as e:
             entry.delete(0, END)
             entry.insert(END, "Error")
-    elif text == "C":
-        entry.delete(0, END)
-    elif text == "!":
-        try:
-            result = factorial(int(entry.get()))
-            entry.delete(0, END)
-            entry.insert(END, result)
-        except Exception as e:
-            entry.delete(0, END)
-            entry.insert(END, "Error")
-    elif text in ["sin", "cos", "tan", "cot"]:
-        try:
-            result = getattr(math, text)(float(entry.get()))
-            entry.delete(0, END)
-            entry.insert(END, result)
-        except Exception as e:
-            entry.delete(0, END)
-            entry.insert(END, "Error")
+    elif text in ["sin", "cos", "tan", "cot", "ln", "sqrt"]:
+        entry.insert(END, text + "(" )
     elif text == "exit":
         root.destroy()
+    elif text == "C":
+        entry.delete(0, END)
     elif text == "del":
         entry.delete(len(entry.get())-1, END)
+    elif text == "pi":
+        entry.insert(END, math.pi)
+    elif text == "e":
+        entry.insert(END, math.e)
     else:
         entry.insert(END, text)
 
@@ -51,7 +46,7 @@ def key_press(event):
         click("del")
 
 def factorial(n):
-    return math.factorial(n)
+    return math.factorial(int(n))
 
 def sin(n):
     return math.sin(n)
@@ -65,12 +60,18 @@ def tan(n):
 def cot(n):
     return 1 / math.tan(n)
 
+def ln(n):
+    return math.log(n)
+
+def sqrt(n):
+    return math.sqrt(n)
 buttons = [
     '7', '8', '9', '/',
     '4', '5', '6', '*',
     '1', '2', '3', '-',
     '.', '0', '=', '+',
-    '(', ')',
+    '(', ')', 'pi', 'e',
+    'ln', 'sqrt', '^',
     'C', '!', 'sin', 'cos', 'tan', 'cot', 'exit', 'del'
 ]
 

@@ -1,5 +1,6 @@
 Fix edit input 5
-Update calculation logic for sin,cos, etc 8
+Update calculation logic for sin,cos, etc 8 +
 Upgrade style 6
-Add new buttons (power, sqrt, e, pi) 7
+Add new buttons (power, sqrt, e, pi,log) 7 +-
+Fix pi and e input
 Add logo instead of text 6
