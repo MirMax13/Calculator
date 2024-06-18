@@ -4,4 +4,4 @@ Upgrade style 6
 Add new buttons (power, sqrt, e, pi,log) 7 +
 Fix pi and e input 7
 Add logo instead of text 6
-Fix factorial with power 7
+Fix factorial with power 7 +

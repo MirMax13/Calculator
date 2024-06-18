@@ -17,11 +17,15 @@ def click(btn):
             expr = entry.get()
             # Replace "^" with "**"
             expr = expr.replace("^", "**")
+            
+            # Replace "5**2!" with "factorial(5**2)"
+            expr = re.sub(r"(\d+)\*\*(\d+)!", r"factorial((\1)**(\2))", expr)
+            # Replace "5**(2+1)!" with "factorial(5**3)"
+            expr = re.sub(r"(\d+)\*\*\(([^)]+)\)!", r"factorial((\1)**(\2))", expr)
             # Replace "5!" with "factorial(5)"
             expr = re.sub(r"(\d+)!", r"factorial(\1)", expr)
             # Replace "(2+3)!" with "factorial(2+3)"
             expr = re.sub(r"\(([^)]+)\)!", r"factorial(\1)", expr)
-            #TODO:Fix factorial with power
 
             result = eval(expr, {'__builtins__': None, 'factorial': factorial, 'sin': sin, 'cos': cos, 'tan': tan, 'cot': cot, 'ln': ln, 'sqrt': sqrt})
             entry.delete(0, END)
