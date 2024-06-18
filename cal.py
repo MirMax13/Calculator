@@ -15,14 +15,12 @@ def click(btn):
         try:
             expr = entry.get()
             expr = re.sub(r"(\d+)([πe]|sin|cos|tan|log|sqrt|\()", r"\1*\2", expr)
+            
+            # Add multiplication between consecutive "π" or "e"
+            expr = re.sub(r"([πe])+", lambda m: '*'.join(m.group(0)), expr)
 
             # Replace "π" with "math.pi" and "e" with "math.e"
             expr = expr.replace("π", str(math.pi)).replace("e", str(math.e))
-
-            # Replace "πe" with "math.pi*math.e"
-            expr = expr.replace(str(math.pi) + str(math.e), str(math.pi * math.e))
-            # Replace "eπ" with "math.e*math.pi"
-            expr = expr.replace(str(math.e) + str(math.pi), str(math.e * math.pi))
             
             # Replace "^" with "**"
             expr = expr.replace("^", "**")
