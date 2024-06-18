@@ -6,7 +6,6 @@ root=Tk()
 root.title("Calculator")
 root.geometry("500x300")
 
-
 entry=Entry(root)
 entry.grid(row=0, column=0, columnspan=5)
 #TODO: Fix edit input
@@ -15,16 +14,21 @@ def click(btn):
     if text == "=":
         try:
             expr = entry.get()
-            # Replace "π" with "math.pi"
-            expr = expr.replace("π", str(math.pi))
-            # Replace "e" with "math.e"
-            expr = expr.replace("e", str(math.e))
+            expr = re.sub(r"(\d+)([πe]|sin|cos|tan|log|sqrt|\()", r"\1*\2", expr)
+
+            # Replace "π" with "math.pi" and "e" with "math.e"
+            expr = expr.replace("π", str(math.pi)).replace("e", str(math.e))
+
+            # Replace "πe" with "math.pi*math.e"
+            expr = expr.replace(str(math.pi) + str(math.e), str(math.pi * math.e))
+            # Replace "eπ" with "math.e*math.pi"
+            expr = expr.replace(str(math.e) + str(math.pi), str(math.e * math.pi))
+            
             # Replace "^" with "**"
             expr = expr.replace("^", "**")
             # Replace u'\u221A' with "sqrt"
             expr = expr.replace(u'\u221A', "sqrt")
-            # Add parentheses around the argument of sqrt if they are not present
-            expr = re.sub(r"sqrt(\d+)", r"sqrt(\1)", expr)
+
             # Replace "5**2!" with "factorial(5**2)"
             expr = re.sub(r"(\d+)\*\*(\d+)!", r"factorial((\1)**(\2))", expr)
             # Replace "5**(2+1)!" with "factorial(5**3)"
@@ -40,7 +44,7 @@ def click(btn):
         except Exception as e:
             entry.delete(0, END)
             entry.insert(END, "Error")
-    elif text in ["sin", "cos", "tan", "cot", "ln"]:
+    elif text in ["sin", "cos", "tan", "cot", "ln", u"\u221A"]:
         entry.insert(END, text + "(" )
     elif text == "exit":
         root.destroy()
@@ -86,7 +90,7 @@ buttons = [
     '.', '0', '=', '(', ')',
     'π', 'e', 'ln', u'\u221A', '^',
     '!', 'sin', 'cos', 'tan', 'cot'
-] #TODO: Fix pi and e input
+]
 
 i = 0
 for btn in buttons:
