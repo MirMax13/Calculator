@@ -4,20 +4,27 @@ import re
 
 root=Tk()
 root.title("Calculator")
-root.geometry("400x300")
+root.geometry("500x300")
 
 
 entry=Entry(root)
-entry.grid(row=0, column=0, columnspan=4)
+entry.grid(row=0, column=0, columnspan=5)
 #TODO: Fix edit input
 def click(btn):
     text = btn
     if text == "=":
         try:
             expr = entry.get()
+            # Replace "π" with "math.pi"
+            expr = expr.replace("π", str(math.pi))
+            # Replace "e" with "math.e"
+            expr = expr.replace("e", str(math.e))
             # Replace "^" with "**"
             expr = expr.replace("^", "**")
-            
+            # Replace u'\u221A' with "sqrt"
+            expr = expr.replace(u'\u221A', "sqrt")
+            # Add parentheses around the argument of sqrt if they are not present
+            expr = re.sub(r"sqrt(\d+)", r"sqrt(\1)", expr)
             # Replace "5**2!" with "factorial(5**2)"
             expr = re.sub(r"(\d+)\*\*(\d+)!", r"factorial((\1)**(\2))", expr)
             # Replace "5**(2+1)!" with "factorial(5**3)"
@@ -33,7 +40,7 @@ def click(btn):
         except Exception as e:
             entry.delete(0, END)
             entry.insert(END, "Error")
-    elif text in ["sin", "cos", "tan", "cot", "ln", "sqrt"]:
+    elif text in ["sin", "cos", "tan", "cot", "ln"]:
         entry.insert(END, text + "(" )
     elif text == "exit":
         root.destroy()
@@ -41,16 +48,14 @@ def click(btn):
         entry.delete(0, END)
     elif text == "del":
         entry.delete(len(entry.get())-1, END)
-    elif text == "pi": #TODO: Fix pi and e input
-        entry.insert(END, math.pi) 
-    elif text == "e":
-        entry.insert(END, math.e)
     else:
         entry.insert(END, text)
 
 def key_press(event):
     if event.char.isdigit() or event.char in ['.', '+', '-', '*', '/', '!', '(', ')','=']:
         click(event.char)
+    elif event.keysym.lower() == "return":
+        click("=")
     elif event.keysym == "BackSpace":
         click("del")
 
@@ -75,20 +80,19 @@ def ln(n):
 def sqrt(n):
     return math.sqrt(n)
 buttons = [
-    '7', '8', '9', '/',
-    '4', '5', '6', '*',
-    '1', '2', '3', '-',
-    '.', '0', '=', '+',
-    '(', ')', 'pi', 'e',
-    'ln', 'sqrt', '^',
-    'C', '!', 'sin', 'cos', 'tan', 'cot', 'exit', 'del'
-] #TODO: Add logo instead of text
+    '7', '8', '9', 'C', 'del',
+    '4', '5', '6', '*', '/',
+    '1', '2', '3', '+', '-',
+    '.', '0', '=', '(', ')',
+    'π', 'e', 'ln', u'\u221A', '^',
+    '!', 'sin', 'cos', 'tan', 'cot'
+] #TODO: Fix pi and e input
 
 i = 0
 for btn in buttons:
     def command(btn=btn):
         click(btn)
-    Button(root, text=btn, width=10,activebackground='orange', command=command).grid(row=i//4+1, column=i%4)
+    Button(root, text=btn, width=10,activebackground='orange', command=command).grid(row=i//5+1, column=i%5)
     i += 1
 #TODO: Upgrade style
 root.bind('<Key>', key_press)
