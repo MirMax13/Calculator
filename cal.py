@@ -4,7 +4,10 @@ import re
 
 root=Tk()
 root.title("Calculator")
-root.geometry("500x300")
+root.geometry("400x200")
+
+del_image = PhotoImage(file="del.png")
+del_image = del_image.subsample(20, 20)
 
 # entry=Entry(root)
 entry=Entry(root, width=50, borderwidth=5)
@@ -45,7 +48,7 @@ def click(btn):
             entry.delete(0, END)
             entry.insert(END, "Error")
     else:
-        if entry.get() == "Error" or entry.get() == "0":
+        if (entry.get() == "Error" or entry.get() == "0" or entry.get() == "0.0") and (text.isdigit() or text in ["sin", "cos", "tan", "cot", "ln", u"\u221A"]):
             entry.delete(0, END)
         if text in ["sin", "cos", "tan", "cot", "ln", u"\u221A"]:
             entry.insert(END, text + "(" )
@@ -55,7 +58,11 @@ def click(btn):
             entry.delete(0, END)
             entry.insert(0, "0")
         elif text == "del":
-            entry.delete(len(entry.get())-1, END)
+            entry_text = entry.get()
+            if entry_text.endswith(("sin(", "cos(", "tan(", "cot(", "ln(", u"\u221A(")):
+                entry.delete(len(entry_text)-len("sin"), END)
+            else:
+                entry.delete(len(entry_text)-1, END)
             if entry.get() == "":
                 entry.insert(0, "0")
         else:
@@ -102,7 +109,10 @@ i = 0
 for btn in buttons:
     def command(btn=btn):
         click(btn)
-    Button(root, text=btn, width=10,activebackground='orange', command=command).grid(row=i//5+1, column=i%5)
+    if btn == 'del':
+        Button(root, image=del_image, width=74, height=20, activebackground='orange', command=lambda: click("del")).grid(row=i//5+1, column=i%5)
+    else:
+        Button(root, text=btn, width=10, activebackground='orange', command=command).grid(row=i//5+1, column=i%5)
     i += 1
 #TODO: Upgrade style
 root.bind('<Key>', key_press)
