@@ -6,7 +6,8 @@ root=Tk()
 root.title("Calculator")
 root.geometry("500x300")
 
-entry=Entry(root)
+# entry=Entry(root)
+entry=Entry(root, width=50, borderwidth=5)
 entry.grid(row=0, column=0, columnspan=5)
 #TODO: Fix edit input
 def click(btn):
@@ -42,16 +43,19 @@ def click(btn):
         except Exception as e:
             entry.delete(0, END)
             entry.insert(END, "Error")
-    elif text in ["sin", "cos", "tan", "cot", "ln", u"\u221A"]:
-        entry.insert(END, text + "(" )
-    elif text == "exit":
-        root.destroy()
-    elif text == "C":
-        entry.delete(0, END)
-    elif text == "del":
-        entry.delete(len(entry.get())-1, END)
     else:
-        entry.insert(END, text)
+        if entry.get() == "Error":
+            entry.delete(0, END)
+        if text in ["sin", "cos", "tan", "cot", "ln", u"\u221A"]:
+            entry.insert(END, text + "(" )
+        elif text == "exit":
+            root.destroy()
+        elif text == "C":
+            entry.delete(0, END)
+        elif text == "del":
+            entry.delete(len(entry.get())-1, END)
+        else:
+            entry.insert(END, text)
 
 def key_press(event):
     if event.char.isdigit() or event.char in ['.', '+', '-', '*', '/', '!', '(', ')','=']:

@@ -7,7 +7,7 @@
 - [x] **Fix pi and e input**: `7`
 - [x] **Add logo instead of text**: `6`
 - [x] **Fix factorial with power**: `7`
-- [ ] **Fix with error input**: `6`
+- [x] **Fix with error input**: `6`
 - [ ] **Fix double brackets**: `7`
 - [x] **Multiplication without \***: \* `7`
 - [x] **Fix multiplication double pi or double e**: `7`
