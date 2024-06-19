@@ -1,19 +1,23 @@
 from tkinter import *
 import math
 import re
+from ttkthemes import ThemedTk
+from tkinter import ttk
 
-root=Tk()
+root = ThemedTk(theme="radiance")
 root.title("Calculator")
-root.geometry("400x200")
+root.geometry("600x300")
 
 del_image = PhotoImage(file="del.png")
 del_image = del_image.subsample(20, 20)
 
-# entry=Entry(root)
-entry=Entry(root, width=50, borderwidth=5)
+entry=ttk.Entry(root, width=50)
 entry.grid(row=0, column=0, columnspan=5)
 entry.insert(0, "0")
-#TODO: Fix edit input
+def ignore_click(event):
+    return "break"
+
+entry.bind("<Button-1>", ignore_click)
 def click(btn):
     text = btn
     if text == "=":
@@ -110,9 +114,9 @@ for btn in buttons:
     def command(btn=btn):
         click(btn)
     if btn == 'del':
-        Button(root, image=del_image, width=74, height=20, activebackground='orange', command=lambda: click("del")).grid(row=i//5+1, column=i%5)
+        ttk.Button(root, image=del_image, width=10, command=lambda: click("del")).grid(row=i//5+1, column=i%5)
     else:
-        Button(root, text=btn, width=10, activebackground='orange', command=command).grid(row=i//5+1, column=i%5)
+        ttk.Button(root, text=btn, width=10, command=command).grid(row=i//5+1, column=i%5)
     i += 1
 #TODO: Upgrade style
 root.bind('<Key>', key_press)
