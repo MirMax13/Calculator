@@ -9,13 +9,18 @@ root.geometry("500x300")
 # entry=Entry(root)
 entry=Entry(root, width=50, borderwidth=5)
 entry.grid(row=0, column=0, columnspan=5)
+entry.insert(0, "0")
 #TODO: Fix edit input
 def click(btn):
     text = btn
     if text == "=":
         try:
             expr = entry.get()
-            expr = re.sub(r"(\d+)([πe]|sin|cos|tan|log|sqrt|\()", r"\1*\2", expr)
+
+            expr = expr.replace(u'\u221A', "sqrt")
+            expr = expr.replace("^", "**")
+
+            expr = re.sub(r"(\d+)([πe]|sin|cos|tan|ln|sqrt|\()", r"\1*\2", expr)
             
             # Add multiplication between consecutive "π" or "e"
             expr = re.sub(r"([πe])+", lambda m: '*'.join(m.group(0)), expr)
@@ -23,10 +28,6 @@ def click(btn):
             # Replace "π" with "math.pi" and "e" with "math.e"
             expr = expr.replace("π", str(math.pi)).replace("e", str(math.e))
             
-            # Replace "^" with "**"
-            expr = expr.replace("^", "**")
-            # Replace u'\u221A' with "sqrt"
-            expr = expr.replace(u'\u221A', "sqrt")
 
             # Replace "5**2!" with "factorial(5**2)"
             expr = re.sub(r"(\d+)\*\*(\d+)!", r"factorial((\1)**(\2))", expr)
@@ -44,7 +45,7 @@ def click(btn):
             entry.delete(0, END)
             entry.insert(END, "Error")
     else:
-        if entry.get() == "Error":
+        if entry.get() == "Error" or entry.get() == "0":
             entry.delete(0, END)
         if text in ["sin", "cos", "tan", "cot", "ln", u"\u221A"]:
             entry.insert(END, text + "(" )
@@ -52,8 +53,11 @@ def click(btn):
             root.destroy()
         elif text == "C":
             entry.delete(0, END)
+            entry.insert(0, "0")
         elif text == "del":
             entry.delete(len(entry.get())-1, END)
+            if entry.get() == "":
+                entry.insert(0, "0")
         else:
             entry.insert(END, text)
 
